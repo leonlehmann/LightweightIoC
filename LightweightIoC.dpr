@@ -22,15 +22,15 @@ begin
       Free;
 
     // Example from unit IoCExample with IDrivable and TCar
-    TIoCContainer.DefaultContainer.RegisterType<IDrivable, TCar>('car');
-    TIoCContainer.DefaultContainer.RegisterType<IDrivable, TBicycle>('bicycle');
+    TIoC.Container.RegisterType<IDrivable, TCar>('car');
+    TIoC.Container.RegisterType<IDrivable, TBicycle>('bicycle');
 
     Writeln('[Car]');
-    car := TIoCContainer.DefaultContainer.Resolve<IDrivable>('car');
+    car := TIoC.Container.Resolve<IDrivable>('car');
     car.Drive;
 
     Writeln('[Bicycle]');
-    bicycle := TIoCContainer.DefaultContainer.Resolve<IDrivable>('bicycle');
+    bicycle := TIoC.Container.Resolve<IDrivable>('bicycle');
     bicycle.Drive;
 
     Readln;

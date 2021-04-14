@@ -46,11 +46,11 @@ var
   t1 : ITest1;
   t2 : ITest1;
 begin
-  TIoCContainer.DefaultContainer.Clear;
-  TIoCContainer.DefaultContainer.RegisterType<ITest1,TTest1>;
+  TIoC.Container.Clear;
+  TIoC.Container.RegisterType<ITest1,TTest1>;
 
-  t1 := TIoCContainer.DefaultContainer.Resolve<ITest1>;
-  t2 := TIoCContainer.DefaultContainer.Resolve<ITest1>;
+  t1 := TIoC.Container.Resolve<ITest1>;
+  t2 := TIoC.Container.Resolve<ITest1>;
   Check(t1 <> nil);
   Check(t2 <> nil);
   Check(t1 <> t2);
@@ -63,9 +63,9 @@ var
   t1 : ITest1;
   t2 : ITest1;
   t3 : ITest2;
-  c : TIoCContainer;
+  c : TIoC;
 begin
-  c := TIoCContainer.Create;
+  c := TIoC.Create;
   try
     c.RegisterType<ITest1,TTest1>(true,'One');
     c.RegisterType<ITest1,TTest11>(true,'OneOne');
@@ -90,9 +90,9 @@ procedure TIoCContainerTests.TestSingleton;
 var
   t1 : ITest1;
   t2 : ITest1;
-  c : TIoCContainer;
+  c : TIoC;
 begin
-  c := TIoCContainer.Create;
+  c := TIoC.Create;
   try
     c.RegisterType<ITest1,TTest1>(true);
     t1 := c.Resolve<ITest1>;
@@ -110,9 +110,9 @@ procedure TIoCContainerTests.TestSingletonInstance;
 var
   t1 : ITest1;
   t2 : ITest1;
-  c : TIoCContainer;
+  c : TIoC;
 begin
-  c := TIoCContainer.Create;
+  c := TIoC.Create;
   try
     t1 := TTest1.Create;
     c.RegisterSingleton<ITest1>(t1);

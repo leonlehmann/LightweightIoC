@@ -11,7 +11,7 @@ uses
 type
   TResolutionResult = (Unknown, Success, InterfaceNotRegistered, ImplNotRegistered);
 
-  TIoCContainer = class
+  TIoC = class
   private
      FComponentRegistry : TDictionary<string,TObject>;
     type
@@ -23,7 +23,7 @@ type
     end;
 
   private
-    class var FDefault : TIoCContainer;
+    class var FDefault : TIoC;
     class destructor ClassDestroy;
   protected
     function GetInterfaceKey<TInterface>(const name: string = ''): string;
@@ -32,7 +32,7 @@ type
   public
     constructor Create;
     destructor Destroy;override;
-    class function DefaultContainer : TIoCContainer;
+    class function Container : TIoC;
 
     // Register a type
     procedure RegisterType<TInterface: IInterface; TImplementation: class>(const name : string = '');overload;
@@ -71,17 +71,17 @@ implementation
 
 { Registration }
 
-procedure TIoCContainer.RegisterType<TInterface, TImplementation>(const name: string);
+procedure TIoC.RegisterType<TInterface, TImplementation>(const name: string);
 begin
   InternalRegisterType<TInterface>(false, TImplementation, name);
 end;
 
-procedure TIoCContainer.RegisterType<TInterface, TImplementation>(const singleton: boolean; const name: string);
+procedure TIoC.RegisterType<TInterface, TImplementation>(const singleton: boolean; const name: string);
 begin
   InternalRegisterType<TInterface>(singleton, TImplementation, name);
 end;
 
-procedure TIoCContainer.RegisterSingleton<TInterface>(const instance: TInterface; const name: string);
+procedure TIoC.RegisterSingleton<TInterface>(const instance: TInterface; const name: string);
 var
   key   : string;
   typeInformation : PTypeInfo;
@@ -104,7 +104,7 @@ begin
     raise EIoCException.Create(Format('An implementation for type %s with name %s is already registered with the container',[typeInformation.Name, name]));
 end;
 
-procedure TIoCContainer.InternalRegisterType<TInterface>(const singleton : boolean; const AImplementation : TClass; const name : string = '');
+procedure TIoC.InternalRegisterType<TInterface>(const singleton : boolean; const AImplementation : TClass; const name : string = '');
 var
   key   : string;
   typeInformation : PTypeInfo;
@@ -147,7 +147,7 @@ end;
 
 { Resolution }
 
-function TIoCContainer.Resolve<TInterface>(const name: string = ''): TInterface;
+function TIoC.Resolve<TInterface>(const name: string = ''): TInterface;
 var
   resolveResult: TResolutionResult;
   errorMsg : string;
@@ -172,7 +172,7 @@ begin
   end;
 end;
 
-function TIoCContainer.InternalResolve<TInterface>(out AInterface: TInterface; const name: string): TResolutionResult;
+function TIoC.InternalResolve<TInterface>(out AInterface: TInterface; const name: string): TResolutionResult;
 var
   key : string;
   errorMsg : string;
@@ -251,7 +251,7 @@ begin
   end;
 end;
 
-function TIoCContainer.GetInterfaceKey<TInterface>(const name: string): string;
+function TIoC.GetInterfaceKey<TInterface>(const name: string): string;
 var
   typeInformation : PTypeInfo;
 begin
@@ -266,7 +266,7 @@ begin
   result := LowerCase(result);
 end;
 
-function TIoCContainer.HasService<T>: boolean;
+function TIoC.HasService<T>: boolean;
 begin
   result := Resolve<T> <> nil;
 end;
@@ -274,31 +274,31 @@ end;
 
 { Constructor, Destructor and friends... }
 
-class destructor TIoCContainer.ClassDestroy;
+class destructor TIoC.ClassDestroy;
 begin
   if FDefault <> nil then
     FDefault.Free;
 end;
 
-procedure TIoCContainer.Clear;
+procedure TIoC.Clear;
 begin
   FComponentRegistry.Clear;
 end;
 
-constructor TIoCContainer.Create;
+constructor TIoC.Create;
 begin
   FComponentRegistry := TDictionary<string,TObject>.Create;
 end;
 
-class function TIoCContainer.DefaultContainer: TIoCContainer;
+class function TIoC.Container: TIoC;
 begin
   if FDefault = nil then
-    FDefault := TIoCContainer.Create;
+    FDefault := TIoC.Create;
 
   result := FDefault;
 end;
 
-destructor TIoCContainer.Destroy;
+destructor TIoC.Destroy;
 var
   o : TObject;
 begin
